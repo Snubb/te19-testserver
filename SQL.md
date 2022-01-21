@@ -33,7 +33,7 @@ describe '[table]';
 create database '[name]';
 // skapar database
 
-ALTER TABLE '[table]' ADD name VARCHAR (140) NOT NULL;
+ALTER TABLE '[table]' ADD(modify, drop) name VARCHAR (140) NOT NULL;
 // Lägg till en grej i tabellen
 
 INSERT INTO users (name) VALUES ('Oliver');
