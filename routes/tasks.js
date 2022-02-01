@@ -12,6 +12,31 @@ const router = express.Router();
     DELETE /:id - Delete task by id
 
 */
+
+/* GET a form for posting a new task  */
+router.get('/new',
+  (req, res, next) => {
+    res.render('tasksform');
+});
+
+/* POST a new task */
+router.post('/',
+  async (req, res, next) => {
+    const sql = 'INSERT INTO tasks (task) VALUES (?)';
+    const result = await pool.promise()
+    .query(sql, [req.body.task])
+    .catch(err => {
+        console.log(err);
+        res.status(500).json({
+            tasks: {
+                error: "Cannot retrieve tasks"
+            }
+        });
+    });
+    res.redirect('/tasks');
+});
+
+
 router.get('/', async (req, res, next) => {
     await pool.promise()
         .query('SELECT * FROM tasks')
