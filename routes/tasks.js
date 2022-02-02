@@ -36,12 +36,20 @@ router.post('/',
     res.redirect('/tasks');
 });
 
+/* POST to delete a meep */
+router.post('/delete/',
+  //body('taskid').isInt(),
+  async (req, res, next) => {
+    const sql = 'DELETE FROM tasks WHERE id = ?';
+    const result = await pool.promise().query(sql, req.body.taskid);
+    res.redirect('/tasks');
+  });
 
 router.get('/', async (req, res, next) => {
     await pool.promise()
         .query('SELECT * FROM tasks')
         .then(([rows, fields]) => {
-            res.json({
+            res.render('tasks', {
                 tasks: {
                     data: rows
                 }
