@@ -43,12 +43,18 @@ router.post('/',
 
 /* POST to delete a meep */
 router.post('/delete/',
-  //body('taskid').isInt(),
   async (req, res, next) => {
     const sql = 'DELETE FROM tasks WHERE id = ?';
     const result = await pool.promise().query(sql, req.body.taskid);
     res.redirect('/tasks');
-  });
+});
+
+router.post('/edit/',
+  async (req, res, next) => {
+    const sql = 'UPDATE tasks SET completed = 1, updatedAt = now() WHERE id = ?';
+    const result = await pool.promise().query(sql, req.body.taskid);
+    res.redirect('/tasks');
+});
 
 router.get('/', async (req, res, next) => {
     /*let  data = {

@@ -4,6 +4,16 @@
     <ul class="task-list">
 {% for item in items %}
     <li class="task-list-item">{{ item.task }}</li>
+    {% if item.completed %}
+        <p>Completed!</p>
+    {% endif %}
+    {% if not item.completed %}
+        <p>Not completed...</p>
+        <form action="/tasks/edit" method="post">
+            <input type="hidden" name="taskid" value={{ item.id }}>
+            <button type="submit">Complete</button>
+        </form>
+    {% endif %}
     <form action="/tasks/delete" method="post">
         <input type="hidden" name="taskid" value={{ item.id }}>
         <button type="submit">Delete</button>
