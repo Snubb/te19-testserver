@@ -1,8 +1,0 @@
-block content 
-
-each task in tasks.data 
-    div
-        p= task.task
-        form(action="/tasks/delete", method="post") 
-            input(type="hidden", name="taskid" value= task.id)
-            button(type="submit") X

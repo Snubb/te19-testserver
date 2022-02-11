@@ -16,7 +16,12 @@ const router = express.Router();
 /* GET a form for posting a new task  */
 router.get('/new',
   (req, res, next) => {
-    res.render('tasksform');
+    let  data = {
+        message: 'Post a new task',
+        layout:  'layout.njk',
+        title: 'Post a new task'
+    }
+    res.render('tasksform.njk', data);
 });
 
 /* POST a new task */
@@ -46,14 +51,23 @@ router.post('/delete/',
   });
 
 router.get('/', async (req, res, next) => {
+    /*let  data = {
+        message: 'Displaying tasks',
+        layout:  'layout.njk',
+        title: 'Tasks',
+        items: await pool.promise().query('SELECT * FROM tasks')
+      }*/
+
     await pool.promise()
         .query('SELECT * FROM tasks')
         .then(([rows, fields]) => {
-            res.render('tasks', {
-                tasks: {
-                    data: rows
-                }
-            });
+            let  data = {
+                message: 'Displaying tasks',
+                layout:  'layout.njk',
+                title: 'Tasks',
+                items: rows
+            }
+            res.render('ntasks.njk', data);
         })
         .catch(err => {
             console.log(err);

@@ -1,0 +1,15 @@
+{% extends layout %}
+{% block  content %}
+    <h1>{{message}}</h1>
+    <ul class="task-list">
+{% for item in items %}
+    <li class="task-list-item">{{ item.task }}</li>
+    <form action="/tasks/delete" method="post">
+        <input type="hidden" name="taskid" value={{ item.id }}>
+        <button type="submit">Delete</button>
+    </form>
+{% else %}
+    <li>This would display if the 'item' collection were empty</li>
+{% endfor %}
+    </ul>
+{% endblock %}
