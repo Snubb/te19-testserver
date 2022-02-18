@@ -6,6 +6,7 @@
 {% for item in items %}
     <li class="task-list-item">
         <h3>{{ item.task }}</h3>
+        <a href="/tasks/{{ item.id }}/edit">Edit task</a>
     {% if item.completed %}
         <p>Completed!</p>
     {% endif %}
