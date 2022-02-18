@@ -3,6 +3,15 @@ body {
   font: 14px "Lucida Grande", Helvetica, Arial, sans-serif; }
 
 a {
-  color: #00B7FF; }
+  color: #00B7FF;
+  text-decoration: none; }
+
+ul {
+  list-style: none; }
+
+.task-list-item {
+  border: solid;
+  margin-bottom: 1rem;
+  padding: 1rem; }
 
 /*# sourceMappingURL=style.css.map */

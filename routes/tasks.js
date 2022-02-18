@@ -24,6 +24,32 @@ router.get('/new',
     res.render('tasksform.njk', data);
 });
 
+router.get('/:id/edit',(req, res, next) => {
+    const id = req.params.id;
+    console.log(id);
+    if(isNaN(id)) {
+        res.status(400).json({
+            task: {
+                error: "Input a number you fool"
+            }
+        });
+    } else {
+        let data = {
+            message: 'Edit a task',
+            layout: 'layout.njk',
+            title: 'Edit a task',
+            taskId: id
+        }
+        res.render('editform.njk', data)
+    }
+});
+router.post('/edit',
+    async (req, res, next) => {
+        const sql = 'UPDATE tasks SET task = ?, updatedAt = now() WHERE id = ?';
+        const result = await pool.promise().query(sql, [req.body.task, req.body.taskid]);
+        res.redirect('/tasks');
+});
+
 /* POST a new task */
 router.post('/',
   async (req, res, next) => {
@@ -41,15 +67,15 @@ router.post('/',
     res.redirect('/tasks');
 });
 
-/* POST to delete a meep */
+/* POST to delete a task */
 router.post('/delete/',
   async (req, res, next) => {
     const sql = 'DELETE FROM tasks WHERE id = ?';
-    const result = await pool.promise().query(sql, req.body.taskid);
+    const result = await pool.promise().query(sql, [req.body.taskid]);
     res.redirect('/tasks');
 });
 
-router.post('/edit/',
+router.post('/complete/',
   async (req, res, next) => {
     const sql = 'UPDATE tasks SET completed = 1, updatedAt = now() WHERE id = ?';
     const result = await pool.promise().query(sql, req.body.taskid);
@@ -57,13 +83,6 @@ router.post('/edit/',
 });
 
 router.get('/', async (req, res, next) => {
-    /*let  data = {
-        message: 'Displaying tasks',
-        layout:  'layout.njk',
-        title: 'Tasks',
-        items: await pool.promise().query('SELECT * FROM tasks')
-      }*/
-
     await pool.promise()
         .query('SELECT * FROM tasks')
         .then(([rows, fields]) => {
@@ -96,7 +115,7 @@ router.get('/:id', async (req, res, next) => {
         });
     } else {
         await pool.promise()
-        .query('SELECT * FROM tasks WHERE id = ' + id)
+        .query('SELECT * FROM tasks WHERE id = ?', [id])
         .then(([rows, fields]) => {
             if(rows.length != 0) {
                 res.json({

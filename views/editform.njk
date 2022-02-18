@@ -2,7 +2,8 @@
 {% block  content %}
     <h1>{{message}}</h1>
     <h3><a href="/tasks">Go back</a></h3>
-    <form action="/tasks" method="post">
+    <form action="/tasks/edit" method="post">
+        <input type="hidden" name="taskid" value={{taskId}}>
         <textarea name="task" id="postArea" cols="30" rows="10"></textarea>
         <button type="submit">Post</button>
     </form>
