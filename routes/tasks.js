@@ -83,14 +83,23 @@ router.post('/complete/',
 });
 
 router.get('/', async (req, res, next) => {
+    const sort = req.query.sort;
+    const id = req.query.id;
+    let sql = "";
+    if(isNaN(id)) {
+        sql = "SELECT * FROM tasks"
+    } else {
+        sql = "SELECT * FROM tasks WHERE id = ?";
+    }
     await pool.promise()
-        .query('SELECT * FROM tasks')
+        .query(sql, [id])
         .then(([rows, fields]) => {
             let  data = {
                 message: 'Displaying tasks',
                 layout:  'layout.njk',
                 title: 'Tasks',
-                items: rows
+                items: rows,
+                order: sort
             }
             res.render('ntasks.njk', data);
         })

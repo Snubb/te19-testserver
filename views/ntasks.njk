@@ -1,7 +1,9 @@
 {% extends layout %}
 {% block  content %}
+
     <h2><a href="/tasks/new">Post new task</a></h2>
     <h1>{{message}}</h1>
+    <h1>{{order}}</h1>
     <ul class="task-list">
 {% for item in items %}
     <li class="task-list-item">
