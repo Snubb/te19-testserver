@@ -72,27 +72,51 @@ router.post('/delete/',
   async (req, res, next) => {
     const sql = 'DELETE FROM tasks WHERE id = ?';
     const result = await pool.promise().query(sql, [req.body.taskid]);
-    res.redirect('/tasks');
+    res.redirect('back');
 });
 
 router.post('/complete/',
   async (req, res, next) => {
     const sql = 'UPDATE tasks SET completed = 1, updatedAt = now() WHERE id = ?';
     const result = await pool.promise().query(sql, req.body.taskid);
-    res.redirect('/tasks');
+    res.redirect('back');
 });
 
 router.get('/', async (req, res, next) => {
     const sort = req.query.sort;
     const id = req.query.id;
-    let sql = "";
-    if(isNaN(id)) {
-        sql = "SELECT * FROM tasks"
-    } else {
-        sql = "SELECT * FROM tasks WHERE id = ?";
+    let completed = req.query.completed;
+    let sql = "SELECT * FROM tasks";
+    let queries = [];
+    if(!isNaN(id)) {
+        sql += " WHERE id = ?";
+        queries.push(id);
     }
+    switch (completed) {
+        case "true":
+            completed = 1;
+            break;
+        case "false":
+            completed = 0;
+            break;
+        default:
+            break;
+    }
+    if(completed == 1 || completed == 0) {
+        if(sql.includes("WHERE")) {
+            sql += " AND completed = ?";
+        } else {
+            sql += " WHERE completed = ?";
+        }
+        queries.push(completed);
+    }
+    if(sort) {
+        sql += " ORDER BY ?";
+        queries.push(sort);
+    }
+    console.log(sql + "\n" + queries);
     await pool.promise()
-        .query(sql, [id])
+        .query(sql, queries)
         .then(([rows, fields]) => {
             let  data = {
                 message: 'Displaying tasks',
