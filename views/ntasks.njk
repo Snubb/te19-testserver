@@ -2,8 +2,12 @@
 {% block  content %}
 
     <h2><a href="/tasks/new">Post new task</a></h2>
+    <form action="/tasks" method="post">
+        <label for="task">Task</label>
+        <input type="text" name="task" id="task">
+        <button type="submit">Add task</button>
+    </form>
     <h1>{{message}}</h1>
-    <h1>{{order}}</h1>
     <ul class="task-list">
 {% for item in items %}
     <li class="task-list-item">

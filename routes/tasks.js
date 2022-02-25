@@ -85,6 +85,7 @@ router.post('/complete/',
 router.get('/', async (req, res, next) => {
     const sort = req.query.sort;
     const id = req.query.id;
+    const json = req.query.json;
     let completed = req.query.completed;
     let sql = "SELECT * FROM tasks";
     let queries = [];
@@ -118,14 +119,23 @@ router.get('/', async (req, res, next) => {
     await pool.promise()
         .query(sql, queries)
         .then(([rows, fields]) => {
-            let  data = {
-                message: 'Displaying tasks',
-                layout:  'layout.njk',
-                title: 'Tasks',
-                items: rows,
-                order: sort
+            console.log(rows)
+            if (json == "true") {
+                res.json({
+                    tasks: {
+                        data: rows
+                    }
+                });
+            } else {
+                let  data = {
+                    message: 'Displaying tasks',
+                    layout:  'layout.njk',
+                    title: 'Tasks',
+                    items: rows,
+                    order: sort
+                }
+                res.render('ntasks.njk', data);
             }
-            res.render('ntasks.njk', data);
         })
         .catch(err => {
             console.log(err);

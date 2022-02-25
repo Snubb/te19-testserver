@@ -10,7 +10,7 @@ require('dotenv').config();
 const indexRouter = require('./routes/index');
 const usersRouter = require('./routes/users');
 const tasksRouter = require('./routes/tasks');
-const apiTaskRouter = require('./routes/api/tasks')
+const apiTaskRouter = require('./routes/api/tasks');
 
 const app = express();
 
@@ -37,6 +37,6 @@ app.use('/api/tasks', apiTaskRouter);
 nunjucks.configure('views', {
   autoescape: true,
   express: app
-})
+});
 
 module.exports = app;
