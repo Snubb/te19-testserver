@@ -54,17 +54,44 @@ router.post('/edit',
 router.post('/',
   async (req, res, next) => {
     const sql = 'INSERT INTO tasks (task) VALUES (?)';
-    const result = await pool.promise()
-    .query(sql, [req.body.task])
-    .catch(err => {
-        console.log(err);
-        res.status(500).json({
-            tasks: {
-                error: "Cannot retrieve tasks"
+    if (req.body.task.length == 0) {
+        await pool.promise()
+        .query('SELECT * FROM tasks')
+        .then(([rows, field]) => {
+            let  data = {
+                message: 'Displaying tasks',
+                layout:  'layout.njk',
+                title: 'Tasks',
+                items: rows,
+                error: "Cannot add empty task"
             }
+            res.redirect('ntasks.njk', data);
+        })
+    } else {
+        await pool.promise()
+        .query(sql, [req.body.task])
+        .then((response) => {
+            console.log(response);
+            if (response[0].affectedRows == 1) {
+                res.redirect('/tasks');
+            } else {
+                res.status(400).json({
+                    task: {
+                        error: "Invalid task"
+                    }
+                })
+            }
+            
+        })
+        .catch(err => {
+            console.log(err);
+            res.status(500).json({
+                tasks: {
+                    error: "Cannot retrieve tasks"
+                }
+            });
         });
-    });
-    res.redirect('/tasks');
+    }
 });
 
 /* POST to delete a task */
@@ -112,14 +139,14 @@ router.get('/', async (req, res, next) => {
         queries.push(completed);
     }
     if(sort) {
-        sql += " ORDER BY ?";
+        sql += " ORDER BY ? DESC";
         queries.push(sort);
     }
     console.log(sql + "\n" + queries);
     await pool.promise()
         .query(sql, queries)
         .then(([rows, fields]) => {
-            console.log(rows)
+            //console.log(rows)
             if (json == "true") {
                 res.json({
                     tasks: {
@@ -131,8 +158,7 @@ router.get('/', async (req, res, next) => {
                     message: 'Displaying tasks',
                     layout:  'layout.njk',
                     title: 'Tasks',
-                    items: rows,
-                    order: sort
+                    items: rows
                 }
                 res.render('ntasks.njk', data);
             }

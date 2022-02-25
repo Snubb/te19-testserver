@@ -1,35 +1,41 @@
 {% extends layout %}
 {% block  content %}
 
+<main class="container">
+
     <h2><a href="/tasks/new">Post new task</a></h2>
     <form action="/tasks" method="post">
-        <label for="task">Task</label>
-        <input type="text" name="task" id="task">
-        <button type="submit">Add task</button>
+    <div class="input-group mb-3">
+        <input name="task" id="task" required type="text" class="form-control" placeholder="New task" aria-label="Recipient's username" aria-describedby="button-addon2">
+        <button class="btn btn-outline-secondary" type="submit" id="button-addon2">Add task</button>
+    </div>
     </form>
+    
     <h1>{{message}}</h1>
-    <ul class="task-list">
+    <ul class="list-group">
 {% for item in items %}
-    <li class="task-list-item">
-        <h3>{{ item.task }}</h3>
-        <a href="/tasks/{{ item.id }}/edit">Edit task</a>
-    {% if item.completed %}
-        <p>Completed!</p>
-    {% endif %}
-    {% if not item.completed %}
-        <p>Not completed...</p>
-        <form action="/tasks/complete" method="post">
+    <li class="list-group-item">
+        <div class="flex">
+        {% if item.completed %}
+            <h3 style="color: green">{{ item.task }}</h3>
+        {% endif %}
+        {% if not item.completed %}
+            <h3 class="color: red">{{ item.task }}</h3>
+            <form action="/tasks/complete" method="post">
+                <input type="hidden" name="taskid" value={{ item.id }}>
+                <button type="submit">Complete</button>
+            </form>
+        {% endif %}
+        <form action="/tasks/delete" method="post" class="m-left-auto">
             <input type="hidden" name="taskid" value={{ item.id }}>
-            <button type="submit">Complete</button>
+            <button type="submit" class="btn btn-danger">Delete</button>
         </form>
-    {% endif %}
-    <form action="/tasks/delete" method="post">
-        <input type="hidden" name="taskid" value={{ item.id }}>
-        <button type="submit">Delete</button>
-    </form>
+        </div>
+        <a href="/tasks/{{ item.id }}/edit">Edit task</a>
     </li>
 {% else %}
     <li>This would display if the 'item' collection were empty</li>
 {% endfor %}
     </ul>
 {% endblock %}
+</main>
