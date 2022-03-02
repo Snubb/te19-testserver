@@ -54,18 +54,12 @@ router.post('/edit',
 router.post('/',
   async (req, res, next) => {
     const sql = 'INSERT INTO tasks (task) VALUES (?)';
-    if (req.body.task.length == 0) {
+    if (req.body.task.length < 3) {
         await pool.promise()
         .query('SELECT * FROM tasks')
         .then(([rows, field]) => {
-            let  data = {
-                message: 'Displaying tasks',
-                layout:  'layout.njk',
-                title: 'Tasks',
-                items: rows,
-                error: "Cannot add empty task"
-            }
-            res.redirect('ntasks.njk', data);
+            req.session.taskError = "Task must be a minimum of 3 characters";
+            res.redirect('/tasks');
         })
     } else {
         await pool.promise()
@@ -73,6 +67,7 @@ router.post('/',
         .then((response) => {
             console.log(response);
             if (response[0].affectedRows == 1) {
+                req.session.flash = "Task successfully posted";
                 res.redirect('/tasks');
             } else {
                 res.status(400).json({
@@ -98,8 +93,16 @@ router.post('/',
 router.post('/delete/',
   async (req, res, next) => {
     const sql = 'DELETE FROM tasks WHERE id = ?';
-    const result = await pool.promise().query(sql, [req.body.taskid]);
-    res.redirect('back');
+    await pool.promise().query(sql, [req.body.taskid])
+    .then((response) => {
+        if (response[0].affectedRows === 1) {
+            req.session.flash = "Task deleted";
+            res.redirect('back');
+        } else {
+            req.session.flash = "Task failed";
+            res.redirect('back');
+        }
+    });
 });
 
 router.post('/complete/',
@@ -110,6 +113,8 @@ router.post('/complete/',
 });
 
 router.get('/', async (req, res, next) => {
+    const flash = req.session.flash;
+    const taskError = req.session.taskError;
     const sort = req.query.sort;
     const id = req.query.id;
     const json = req.query.json;
@@ -158,7 +163,9 @@ router.get('/', async (req, res, next) => {
                     message: 'Displaying tasks',
                     layout:  'layout.njk',
                     title: 'Tasks',
-                    items: rows
+                    items: rows,
+                    flash: flash,
+                    taskError: taskError
                 }
                 res.render('ntasks.njk', data);
             }

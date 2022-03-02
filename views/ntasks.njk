@@ -9,33 +9,52 @@
         <input name="task" id="task" required type="text" class="form-control" placeholder="New task" aria-label="Recipient's username" aria-describedby="button-addon2">
         <button class="btn btn-outline-secondary" type="submit" id="button-addon2">Add task</button>
     </div>
+    {% if taskError %}
+        <p class="text-danger">{{taskError}}</p>
+    {% endif %}
     </form>
     
     <h1>{{message}}</h1>
     <ul class="list-group">
-{% for item in items %}
-    <li class="list-group-item">
-        <div class="flex">
-        {% if item.completed %}
-            <h3 style="color: green">{{ item.task }}</h3>
-        {% endif %}
-        {% if not item.completed %}
-            <h3 class="color: red">{{ item.task }}</h3>
-            <form action="/tasks/complete" method="post">
-                <input type="hidden" name="taskid" value={{ item.id }}>
-                <button type="submit">Complete</button>
-            </form>
-        {% endif %}
-        <form action="/tasks/delete" method="post" class="m-left-auto">
-            <input type="hidden" name="taskid" value={{ item.id }}>
-            <button type="submit" class="btn btn-danger">Delete</button>
-        </form>
-        </div>
-        <a href="/tasks/{{ item.id }}/edit">Edit task</a>
-    </li>
-{% else %}
-    <li>This would display if the 'item' collection were empty</li>
-{% endfor %}
+
+    <div class="accordion" id="accordionExample">
+        {% for item in items %}
+        <div class="accordion-item">
+            <h2 class="accordion-header" id="headingtask{{item.id}}">
+                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse{{item.id}}" aria-expanded="false" aria-controls="collapse{{item.id}}">
+                    {{item.task}}
+                </button>
+            </h2>
+            <div id="collapse{{item.id}}" class="accordion-collapse collapse" aria-labelledby="headingtask{{item.id}}" data-bs-parent="#accordionExample">
+                <div class="accordion-body">
+                <div class="flex">
+                    {%if item.completed%}
+                        <p>Status: completed</p>
+                    {%else%}
+                        <p>Status: not completed</p>
+                        <form action="/tasks/complete" method="post">
+                            <input type="hidden" name="taskid" value={{ item.id }}>
+                            <button type="submit" class="btn-success">Complete task</button>
+                        </form>
+                    {%endif%}
+                    <form action="/tasks/delete" method="post" class="m-left-auto">
+                        <input type="hidden" name="taskid" value={{ item.id }}>
+                        <button type="submit" class="btn btn-outline-danger">Delete</button>
+                    </form>
+                </div>
+                <p>Created at: {{item.createdAt}}</p>
+                <p>Updated at: {{item.updatedAt}}</p>
+                <div class="flex">
+                    <a href="/tasks/{{ item.id }}/edit" style="margin-left: auto">Edit task</a>
+                </div>
+                    </div>
+                </div>
+            </div>
+        {%endfor%}
+    </div> 
     </ul>
+    {% if flash %}
+        {% include 'components/flash.njk' %}
+    {% endif %}
 {% endblock %}
 </main>

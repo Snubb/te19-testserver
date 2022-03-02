@@ -4,6 +4,7 @@ const cookieParser = require('cookie-parser');
 const logger = require('morgan');
 const sassMiddleware = require('node-sass-middleware');
 const nunjucks = require('nunjucks');
+const session = require('express-session');
 
 require('dotenv').config();
 
@@ -29,10 +30,18 @@ app.use(sassMiddleware({
 }));
 app.use(express.static(path.join(__dirname, 'public')));
 
+app.use(session({
+  secret: 'kirbycarkirbycar',
+  resave: false,
+  saveUninitialized: true,
+  cookie: { sameSite: true }
+}))
+
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
 app.use('/tasks', tasksRouter);
 app.use('/api/tasks', apiTaskRouter);
+
 
 nunjucks.configure('views', {
   autoescape: true,
