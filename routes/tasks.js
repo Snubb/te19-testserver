@@ -105,11 +105,12 @@ router.post('/delete/',
     });
 });
 
-router.post('/complete/',
+router.post('/:id/complete/',
   async (req, res, next) => {
-    const sql = 'UPDATE tasks SET completed = 1, updatedAt = now() WHERE id = ?';
-    const result = await pool.promise().query(sql, req.body.taskid);
-    res.redirect('back');
+    const id = req.params.id;
+    const sql = 'UPDATE tasks SET completed = !completed, updatedAt = now() WHERE id = ?';
+    await pool.promise().query(sql, [id]);
+    //res.redirect('back');
 });
 
 router.get('/', async (req, res, next) => {

@@ -28,15 +28,20 @@
             <div id="collapse{{item.id}}" class="accordion-collapse collapse" aria-labelledby="headingtask{{item.id}}" data-bs-parent="#accordionExample">
                 <div class="accordion-body">
                 <div class="flex">
-                    {%if item.completed%}
-                        <p>Status: completed</p>
-                    {%else%}
-                        <p>Status: not completed</p>
-                        <form action="/tasks/complete" method="post">
-                            <input type="hidden" name="taskid" value={{ item.id }}>
-                            <button type="submit" class="btn-success">Complete task</button>
-                        </form>
-                    {%endif%}
+                    <div class="form-check me-3">
+                        <input
+                            class="form-check-input"
+                            type="checkbox"
+                            value="{{item.completed}}"
+                            name="task-{{item.id}}"
+                            id="task-{{item.id}}"
+                            {% if item.completed %}checked{% endif %}>
+                        <label
+                            class="form-check-label"
+                            for="task-{{item.id}}">
+                            Completed
+                        </label>
+                    </div>
                     <form action="/tasks/delete" method="post" class="m-left-auto">
                         <input type="hidden" name="taskid" value={{ item.id }}>
                         <button type="submit" class="btn btn-outline-danger">Delete</button>
@@ -56,5 +61,6 @@
     {% if flash %}
         {% include 'components/flash.njk' %}
     {% endif %}
+    <script src="/js/complete.js"></script>
 {% endblock %}
 </main>

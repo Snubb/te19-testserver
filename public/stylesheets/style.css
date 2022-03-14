@@ -8,6 +8,9 @@ a {
 ul {
   list-style: none; }
 
+.list-group {
+  margin-bottom: 2rem; }
+
 .task-list-item {
   border: solid;
   margin-bottom: 1rem;
