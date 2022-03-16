@@ -145,14 +145,26 @@ router.get('/', async (req, res, next) => {
         queries.push(completed);
     }
     if(sort) {
-        sql += " ORDER BY ? DESC";
-        queries.push(sort);
+        switch (sort) {
+            case 'updatedAt':
+                sql += " ORDER BY updatedAt";
+                break;
+            case 'createdAt':
+                sql += " ORDER BY createdAt";
+                break;
+            case 'task':
+                sql += " ORDER BY task";
+                break;
+            case 'completed':
+                sql += " ORDER BY completed DESC";
+                break;
+        }
     }
     console.log(sql + "\n" + queries);
     await pool.promise()
         .query(sql, queries)
         .then(([rows, fields]) => {
-            //console.log(rows)
+            console.log(rows)
             if (json == "true") {
                 res.json({
                     tasks: {

@@ -15,6 +15,13 @@
     </form>
     
     <h1>{{message}}</h1>
+    <div class="btn-group" role="group" aria-label="Basic outlined example">
+        <a href="/tasks?sort=updatedAt"><button type="button" class="btn btn-outline-primary">Last updated</button></a>
+        <a href="/tasks?sort=createdAt"><button type="button" class="btn btn-outline-primary">Created</button></a>
+        <a href="/tasks?sort=task"><button type="button" class="btn btn-outline-primary">Alphabetically</button></a>
+        <a href="/tasks?sort=completed"><button type="button" class="btn btn-outline-primary">Completed</button></a>
+        <a href="javascript:jsonFormat();"><button type="button" class="btn btn-outline-primary">Json format</button></a>
+    </div>
     <ul class="list-group">
 
     <div class="accordion" id="accordionExample">
@@ -62,5 +69,6 @@
         {% include 'components/flash.njk' %}
     {% endif %}
     <script src="/js/complete.js"></script>
+    <script src="/js/json.js"></script>
 {% endblock %}
 </main>
